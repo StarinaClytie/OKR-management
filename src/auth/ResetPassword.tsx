@@ -57,7 +57,7 @@ export function ResetPassword({ onSubmit, onBack, locale = 'zh-CN' }: ResetPassw
 
   return (
     <main className="auth-login">
-      <div className="auth-login__brand">瞬谱光电 · TIME-TECH SPECTRA</div>
+      <div className="auth-login__brand">OKR Management Platform</div>
       <h1 className="auth-login__title">{t('reset.title')}</h1>
       <p className="auth-login__subtitle">{t('reset.description')}</p>
       <form className="auth-login__form" onSubmit={handleSubmit} noValidate>

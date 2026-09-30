@@ -86,9 +86,9 @@ export function Sidebar(props: SidebarProps) {
           <X size={20} aria-hidden="true" />
         </button>
       ) : null}
-      <NavLink className="app-brand" to={dashboardPath} onClick={props.onNavigate} title={collapsed ? '瞬谱光电 TIME-TECH SPECTRA' : undefined}>
-        <span className="app-brand__mark" aria-hidden="true">T</span>
-        <span className={collapsed ? 'sr-only' : undefined}>瞬谱光电 TIME-TECH SPECTRA</span>
+      <NavLink className="app-brand" to={dashboardPath} onClick={props.onNavigate} title={collapsed ? 'OKR Management Platform' : undefined}>
+        <span className="app-brand__mark" aria-hidden="true">O</span>
+        <span className={collapsed ? 'sr-only' : undefined}>OKR Management Platform</span>
       </NavLink>
 
       <nav className="app-sidebar__nav" aria-label={t('navigation.workspace')}>

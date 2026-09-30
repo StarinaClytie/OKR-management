@@ -54,7 +54,7 @@ export function ForgotPassword({ onSubmit, onBack, locale = 'zh-CN' }: ForgotPas
 
   return (
     <main className="auth-login">
-      <div className="auth-login__brand">瞬谱光电 · TIME-TECH SPECTRA</div>
+      <div className="auth-login__brand">OKR Management Platform</div>
       <h1 className="auth-login__title">{t('forgot.title')}</h1>
       <p className="auth-login__subtitle">{t('forgot.description')}</p>
       <form className="auth-login__form" onSubmit={handleSubmit} noValidate>
