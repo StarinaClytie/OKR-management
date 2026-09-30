@@ -1,73 +1,108 @@
-# 瞬谱光电 · TIME-TECH SPECTRA OKR
+# OKR Management Platform
 
-一个中文优先、可即时切换 English 的企业 OKR 应用，提供角色化仪表盘、真实 KR 进度历史、风险事件矩阵与执行状态解释、结构化日报、修订历史，以及由 Supabase RLS 和私有 Storage 保护的附件。
+A role-aware OKR workspace for aligning objectives, tracking key results, coordinating projects, and turning daily execution into structured reports. The interface supports English and Chinese, while the demo mode makes the main workflows available without connecting to production services.
 
-用户操作与权限说明见[中文用户指南](docs/user-guide.zh-CN.md)和[English user guide](docs/user-guide.en.md)。
+For detailed product guidance, see the [English user guide](docs/user-guide.en.md) or the [Chinese user guide](docs/user-guide.zh-CN.md).
 
-## 本地运行
+## Screenshots
+
+### Role-based dashboard
+
+![Employee dashboard with key results and progress trends](docs/images/dashboard.png)
+
+### OKR management
+
+![Objective and key result management workspace](docs/images/okr-management.png)
+
+### Daily reports
+
+![Structured daily reporting workspace](docs/images/reports.png)
+
+## Key Features
+
+- Role-based dashboards for administrators, management, project leaders, employees, and HR.
+- Objective and key-result lifecycle management with ownership, progress history, status, and permission-aware views.
+- Project planning views including alignment trees, Gantt charts, progress trends, and recorded work hours.
+- Structured daily, weekly, monthly, quarterly, and annual reporting workflows.
+- Resource and supply management with attachments and issue tracking.
+- HR work-hour review and organization-level user and role administration.
+- In-app notifications and instant English/Chinese interface switching.
+- Supabase-backed authentication, persistence, restricted RPCs, and row-level security.
+- Private attachment transfer through presigned Alibaba Cloud OSS URLs, with attachment metadata retained in PostgreSQL.
+
+## Technology Stack
+
+- React, TypeScript, React Router, and Vite
+- Recharts for operational visualizations
+- Supabase Auth and PostgreSQL with row-level security
+- Express attachment API and Alibaba Cloud OSS
+- Vitest and Testing Library
+
+## Local Setup
 
 ```bash
 npm install
+cp .env.example .env.local
 npm run dev
-npm run test:run
-npm run typecheck
-npm run build
 ```
 
-开发服务器启动后，按终端显示的本地地址打开应用。生产构建会输出到 `dist/`。
+Open the local URL printed by Vite. The default example configuration uses demo mode and does not require Supabase or OSS credentials.
 
-## 运行模式
+## Application Modes
 
-复制 `.env.example` 为 `.env.local`，选择一种模式：
+Choose one mode in `.env.local`:
 
 ```dotenv
-# 完全本地的模拟身份和数据
+# In-memory identities and sample data
 VITE_APP_MODE=demo
 
-# 或真实 Supabase 身份、数据库和私有附件
+# Supabase authentication and persistent application data
 VITE_APP_MODE=supabase
-# 从 Supabase Project Settings > API 复制实际项目 URL 与 publishable/anon key。
-# 这些值不能有首尾空格，也不能是示例或占位字符串。
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 ```
 
-`demo` 不构造 Supabase 客户端，也不会上传数据；`supabase` 必须配置公开 URL 和 publishable/anon key。前端绝不能配置 service-role key 或数据库密码。
+`demo` mode keeps its data in the current page session and never uploads files. `supabase` mode requires a valid project URL and publishable/anonymous key. Never expose a service-role key or database password in the frontend environment.
 
-`npm run build:production` 按 Vite 的生产模式读取 `.env`、`.env.local`、`.env.production` 和 `.env.production.local`，后面的文件覆盖前面的文件；由 CI 或服务器注入的同名环境变量优先级最高。生产密钥应由受保护的 CI/服务器环境注入，或仅放在不提交 Git 的 `.env.production.local`。
+## Security Model
 
-## 演示方式与真实写入
+Frontend navigation and controls improve the user experience, but they are not the authorization boundary. In Supabase mode, PostgreSQL row-level security, restricted RPCs, and attachment authorization checks validate every protected read or write. Daily-report content, evidence, and attachments are treated as separately permissioned resources.
 
-顶栏的“演示角色”切换器仅在 `demo` 模式中可用，可在管理员、管理层、项目负责人、员工和 HR 五种模拟身份间切换。每种角色会看到其权限范围内的仪表盘和导航；当路由权限被拒绝时，应用会显示不泄露资源信息的通用访问受限页面。顶栏的“中文 / English”可即时切换界面语言，首次访问默认中文。
+Attachment binaries are uploaded directly to private Alibaba Cloud OSS objects through short-lived signed URLs. PostgreSQL stores the application metadata, ownership, object path, state, checksum, media type, and size. The attachment API keeps OSS credentials and the Supabase service-role key on the server only.
 
-员工在 Supabase 模式可通过“更新我的 KR”写入自己负责 KR 的不可变实际进度记录，并通过 Daily OKR Entry 记录结果、附件和工时。项目负责人只能在被分配的 Objective 下创建 KR；管理员只维护用户和角色。员工和 HR 的项目列表不会显示未授权项目的元数据。
-
-## 安全边界
-
-演示模式的菜单、路由和按钮控制只用于体验；Supabase 模式由数据库 RLS、受限 RPC 和 Storage policy 对每次读取和写入重新鉴权。管理员默认不能读取机密业务正文；OKR 摘要、日报正文、证据和附件是独立权限资源。项目不包含 AI 功能。
-
-## 验证
+## Verification
 
 ```bash
 npm run verify:config
-npm test -- --run scripts/verify-supabase-config.test.mjs
 npm run test:smoke:real
 npm run test:run
 npm run typecheck
 npm run build
+```
+
+Database changes can additionally be checked in an isolated local Supabase environment:
+
+```bash
 npx supabase db reset
 npx supabase test db
 npx supabase db lint
 ```
 
-## 数据与部署
+## Deployment Notes
 
-演示模式的数据只保存在当前页面内存；它是不可持久化的预览，不是对真实持久化的证明。只有在正确配置了 `VITE_APP_MODE=supabase`、有效 Supabase URL 和公开 publishable/anon key 的生产构建中，KR 进度与风险事件保存才会写入 Supabase。Supabase 与阿里云部署、备份、清理和上线闸门见 [Supabase 部署手册](docs/supabase-setup.md)。
+Create the production frontend with:
 
 ```bash
 npm run build:production
 ```
 
-`build:production` 会在**同一组 Vite 生产环境变量**下先运行 `--production` 配置校验，再构建 `dist/`；不要将示例、占位值或高权限密钥放入 shell 命令。生产构建输出到 `dist/`，可由 Nginx 作为 SPA 静态站点托管。未获明确批准前，不要执行 `supabase db push` 或覆盖线上站点。
+The build reads the standard Vite production environment files, with deployment-injected variables taking precedence, and writes the static application to `dist/`. Serve it as a single-page application and route `/api/attachments` and `/api/resource-attachments` to the separately built attachment API.
 
-`npm run test:smoke:real` 是一个无网络、无真实写入的 Supabase 模式交互测试装置。它以受控内存仓库验证 KR 保存、风险创建/编辑/解决与矩阵位置、负责人范围、权限非披露、语言切换和直达拒绝页；它不能替代已获批准后的真实 Supabase 验收。
+The attachment API requires server-only Supabase and OSS configuration, including `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `OSS_ACCESS_KEY_ID`, `OSS_ACCESS_KEY_SECRET`, `OSS_BUCKET`, `OSS_REGION`, and `OSS_ENDPOINT`. Build and run it with:
+
+```bash
+npm run server:build
+npm run server:start
+```
+
+See the [Supabase and deployment guide](docs/supabase-setup.md) for database setup, production checks, backups, and operational procedures.
