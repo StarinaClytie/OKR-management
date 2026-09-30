@@ -1,6 +1,6 @@
-# TIME-TECH SPECTRA OKR User Guide (English)
+# OKR Management Platform User Guide (English)
 
-TIME-TECH SPECTRA OKR manages company Objectives, Key Results (KRs), daily reports, actual progress, and recorded work hours. The interface defaults to Chinese on the first visit. Use the control in the top bar to switch instantly between 中文 and English without changing the URL. Interface text is translated; business content entered by users—such as Objectives, KRs, and daily reports—stays in its original language.
+OKR Management Platform manages company Objectives, Key Results (KRs), daily reports, actual progress, and recorded work hours. The interface defaults to Chinese on the first visit. Use the control in the top bar to switch instantly between 中文 and English without changing the URL. Interface text is translated; business content entered by users—such as Objectives, KRs, and daily reports—stays in its original language.
 
 ## 1. Sign-in and visible scope
 
