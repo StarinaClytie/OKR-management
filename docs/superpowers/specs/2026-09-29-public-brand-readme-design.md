@@ -60,4 +60,3 @@ Store optimized PNG images in `docs/images/` and reference them with repository-
 - Inspect all three screenshots for English UI, generic branding, readable content, and absence of private data.
 - Confirm `README.md` renders valid relative image links and contains no company name or Chinese prose.
 - Review the final Git diff before committing and pushing to `origin/main`.
-

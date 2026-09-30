@@ -248,4 +248,3 @@ test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
 ```
 
 Expected: the equality check exits successfully.
-
